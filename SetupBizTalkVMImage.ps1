@@ -106,12 +106,12 @@ else {
 }
 
 $storageAccount = Get-AzStorageAccount -ResourceGroupName $ResourceGroupName -Name $StorageAccountName -ErrorAction SilentlyContinue
+$containerName = "vmbuilderscripts"
 if ($null -ne $storageAccount) {
     Write-Warning "Storage account already exists, skipping creation"
 }
 else {
     # Create a storage account
-    $containerName = "vmbuilderscripts"
     $scope = "/subscriptions/$SubscriptionID/resourceGroups/$ResourceGroupName/providers/Microsoft.Storage/storageAccounts/$StorageAccountName/blobServices/default/containers/$containerName"
 
     Write-Information "Creating storage account..."
@@ -133,6 +133,11 @@ Read-Host -Prompt "Upload the provisioning scripts AND any other assets (SQL Ser
 $startTime = Get-Date
 $endTime = $startTime.AddHours(1)
 $containerSASToken = New-AzStorageContainerSASToken -Name $containerName -Context $storageAccount.Context -Permission r -StartTime $startTime -ExpiryTime $endTime
+if ($null -eq $containerSASToken) {
+	Write-Error "Failed to acquire SASToken, please check the storage account."
+	exit
+}
+
 $containerSASTokenSecure = ConvertTo-SecureString -String $containerSASToken -AsPlainText -Force
 
 Write-Information "Provisioning resources..."

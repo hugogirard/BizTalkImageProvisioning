@@ -20,6 +20,9 @@ param storageAccountName string
 @secure()
 param containerSASToken string
 
+@description('The name of the SQL Server ISO file in the storage account to be installed on the VM. ex: SQLServer2022-x64-ENU-Dev.iso')
+param sqlServerISOFileName string
+
 @description('The name of the container in the storage account that holds the scripts to be provisioned on the VM')
 var scriptContainerName = 'vmbuilderscripts'
 
@@ -106,7 +109,7 @@ resource imageTemplate 'Microsoft.VirtualMachineImages/imageTemplates@2022-02-14
         type: 'PowerShell'
         name: 'Run SQL Server 2022 ISO Download Script'
         inline: [
-          '& "C:\\installers\\DownloadSQLServer.ps1" -SQLServerISOUri "${storageAccount.properties.primaryEndpoints.blob}${scriptContainerName}/SQLServer2022-x64-ENU-Dev.iso${containerSASToken}"'
+          '& "C:\\installers\\DownloadSQLServer.ps1" -SQLServerISOUri "${storageAccount.properties.primaryEndpoints.blob}${scriptContainerName}/${sqlServerISOFileName}${containerSASToken}"'
         ]
       } 
       {
