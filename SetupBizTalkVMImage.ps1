@@ -144,10 +144,13 @@ Write-Information "Provisioning resources..."
 $deployment = New-AzResourceGroupDeployment -Name "BizTalkVMImageDeployment" `
                               -ResourceGroupName $ResourceGroupName `
                               -TemplateFile "$FilesDirectory\biztalkvmimage.bicep" `
-                              -TemplateParameterFile "$FilesDirectory\biztalkvmimage.bicepparam" `
+                              -galleryName "galbiztalk" `
+                              -imageGalleryName "biztalkdemolab" `
+                              -imageTemplateName "it-biztalkdemo" `
                               -userIdentityName $identity.Name `
                               -storageAccountName $storageAccount.StorageAccountName `
                               -containerSASToken $containerSASTokenSecure `
+                              -sqlServerISOFileName "SQLServer2022-x64-ENU-Dev.iso" `
                               -Verbose `
                               -ErrorAction Stop
 
